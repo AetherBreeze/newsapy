@@ -2,9 +2,9 @@ import aiohttp
 import asyncio
 from newsapy import const
 
-from newsapy.classes.newsapi_auth import NewsApiAuth
-from newsapy.classes.newsapi_article import NewsArticle
-from newsapy.utilities.nltk_handler import initialize_nltk_data
+from newsapy.newsapi_auth import NewsApiAuth
+from newsapy.newsapi_article import NewsArticle
+from newsapy.nltk_handler import initialize_nltk_data
 from os.path import isdir
 from os import mkdir
 

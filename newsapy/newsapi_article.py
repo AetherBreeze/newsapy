@@ -1,10 +1,10 @@
 import cv2
-from newsapy.utilities import image_utils
+from newsapy import image_utils
 
 from datetime import datetime
 from collections import OrderedDict
 from newsapy.const import NEWS_SIGNATURES, GARBAGE_SOURCES
-from newsapy.utilities.proper_noun_extraction import extract_proper_nouns_from_text
+from newsapy.proper_noun_extraction import extract_proper_nouns_from_text
 
 class NewsArticle(object):
     def __init__(self, client, article_json, force_initialize_proper_nouns=False):

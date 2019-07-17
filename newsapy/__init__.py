@@ -1,2 +1,2 @@
-from newsapy.classes.newsapi_client import NewsApiClient
-from newsapy.classes.newsapi_article import NewsArticle
+from newsapy.newsapi_client import NewsApiClient
+from newsapy.newsapi_article import NewsArticle

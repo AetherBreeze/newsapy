@@ -22,7 +22,7 @@ setup(
     url='https://everyonegetinhere.com',
     install_requires=install_requires,
     description='An unofficial asynchronous, key-switching Python client for NewsAPI',
-    download_url='https://github.com/CocoPommel/newsapy/archive/v0.1.3.tar.gz',
+    download_url='https://github.com/CocoPommel/newsapy/archive/0.1.5.tar.gz',
     keywords=['newsapy', 'newsapi', 'news'],
     classifiers=[
         'Intended Audience :: Developers',
