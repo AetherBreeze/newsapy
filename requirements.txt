@@ -1,0 +1,5 @@
+aiohttp
+cv2
+nltk
+numpy
+PIL
