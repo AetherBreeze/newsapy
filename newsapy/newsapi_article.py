@@ -1,9 +1,10 @@
 import cv2
-from newsapy import image_utils
+import json
 
+from newsapy import image_utils
 from datetime import datetime
 from collections import OrderedDict
-from newsapy.const import NEWS_SIGNATURES, GARBAGE_SOURCES
+from newsapy.const import NEWS_SIGNATURES, GARBAGE_SOURCES, IMAGE_URL_FORMAT, NEWSAPI_PARSED_TIME_FORMAT
 from newsapy.proper_noun_extraction import extract_proper_nouns_from_text
 
 class NewsArticle(object):
@@ -73,7 +74,7 @@ class NewsArticle(object):
                 if unique: # if the noun wasnt absorbed by any others
                     ret.add(first_proper_noun) # then we want it
 
-            self.__all_proper_nouns = ret # set the property so we only have to compute it once
+            self.__all_proper_nouns = list(ret) # set the property so we only have to compute it once
 
         return self.__all_proper_nouns
 
@@ -100,11 +101,25 @@ class NewsArticle(object):
     def image(self, dimensions=None):
         return self.__parent_client.event_loop.run_until_complete(self.image_async(dimensions=dimensions))
 
+    def to_json(self):
+        ret = {}
+
+        ret["uid"] = 0 #HASH THIS
+        ret["title"] = self.title
+        ret["description"] = self.description
+        ret["content"] = self.content
+        ret["url"] = self.url
+        ret["image_url"] = IMAGE_URL_FORMAT.format(ret["uid"])
+        ret["keywords"] = self.all_proper_nouns
+        ret["source"] = self.source
+        ret["time_published"] = datetime.strftime(self.time_published, NEWSAPI_PARSED_TIME_FORMAT)
+
+        return json.dumps(ret)
 
 def parse_newsapi_time(newsapi_time_string): # WORKS
     actual_datetime = newsapi_time_string.split('+')[0].split('.')[0] # filters out time offset and useless decimal seconds
     actual_datetime = actual_datetime.replace('Z', '') # sometimes there's a Z on the end of the time?
-    return datetime.strptime(actual_datetime, "%Y-%m-%dT%H:%M:%S")
+    return datetime.strptime(actual_datetime, NEWSAPI_PARSED_TIME_FORMAT)
 
 
 def format_text(text):

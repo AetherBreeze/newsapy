@@ -18,6 +18,8 @@ IMAGE_DIRECTORY = "images"
 
 # newsapi_article.py
 NEWS_SIGNATURES = ["| TheHill",  "- CNN", "  Guardian News", "| NYT News - The New York Times", " | NBC Nightly News", " - Bloomberg", " - The Boston Globe", "at CNN.com", "NY POST:", " - Fox News", "Visit MarketsInsider.com …", "Visit Business Insider"]
+IMAGE_URL_FORMAT = "https://res.cloudinary.com/fortitudetec-intern-2019/image/upload/{}.png"
+NEWSAPI_PARSED_TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
 # nltk_handler.py
 TAGGERS = ["maxent_treebank_pos_tagger", "averaged_perceptron_tagger"]
