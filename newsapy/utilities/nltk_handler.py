@@ -2,7 +2,7 @@ import nltk
 import os
 import platform
 
-from const import TAGGERS
+from newsapy.const import TAGGERS
 
 def initialize_nltk_data():
     if os.path.exists("init"):

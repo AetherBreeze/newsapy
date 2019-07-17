@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 install_requires = [
     "aiohttp==3.5.4",
@@ -16,14 +16,13 @@ python_requires = '>=3'
 
 setup(
     name='newsapy',
-    version='0.1.2',
+    packages=["newsapy"],
+    version='0.1.6',
     license='MIT',
     url='https://everyonegetinhere.com',
-    packages=find_packages(),
     install_requires=install_requires,
-    tests_require=tests_require,
     description='An unofficial asynchronous, key-switching Python client for NewsAPI',
-    download_url='https://github.com/mattlisiv/newsapi-python/archive/master.zip',
+    download_url='https://github.com/CocoPommel/newsapy/archive/v0.1.3.tar.gz',
     keywords=['newsapy', 'newsapi', 'news'],
     classifiers=[
         'Intended Audience :: Developers',
