@@ -8,3 +8,4 @@ venv/
 *log.txt
 *~
 .DS_Store
+deploy_to_pypi.sh

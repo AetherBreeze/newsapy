@@ -1,7 +1,8 @@
 import aiohttp
 import asyncio
-from newsapy import const
+import hashlib
 
+from newsapy import const
 from newsapy.newsapi_auth import NewsApiAuth
 from newsapy.newsapi_article import NewsArticle
 from newsapy.nltk_handler import initialize_nltk_data
@@ -22,6 +23,7 @@ class NewsApiClient(object):
             mkdir(const.IMAGE_DIRECTORY)
         self.event_loop = asyncio.get_event_loop()
         self.http_session = aiohttp.ClientSession()
+        self.hasher = hashlib.sha3_224()
 
         initialize_nltk_data() # ensures that all the data needed for proper noun extraction is downloaded
 

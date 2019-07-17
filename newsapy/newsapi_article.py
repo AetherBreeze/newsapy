@@ -4,11 +4,12 @@ import json
 from newsapy import image_utils
 from datetime import datetime
 from collections import OrderedDict
-from newsapy.const import NEWS_SIGNATURES, GARBAGE_SOURCES, IMAGE_URL_FORMAT, NEWSAPI_PARSED_TIME_FORMAT
+from newsapy.const import NEWS_SIGNATURES, GARBAGE_SOURCES, TEXT_ENCODING_FORMAT, IMAGE_URL_FORMAT, NEWSAPI_PARSED_TIME_FORMAT
 from newsapy.proper_noun_extraction import extract_proper_nouns_from_text
 
 class NewsArticle(object):
     def __init__(self, client, article_json, force_initialize_proper_nouns=False):
+        self.__uid = None # used in some databases
         self.id = None # used for UID in some applications after fetching
         self.source = article_json["source"]["name"]
         self.authors = article_json["author"]
@@ -78,6 +79,16 @@ class NewsArticle(object):
 
         return self.__all_proper_nouns
 
+    @property
+    def uid(self):
+        if not (self.title and self.source): # since the hash is a combination of these two, we cant make one without them
+            return None
+        elif not self.__uid:
+            self.__parent_client.hasher.update((self.title + self.source).encode(TEXT_ENCODING_FORMAT))
+            self.__uid = self.__parent_client.hexdigest()
+
+        return self.__uid
+
     async def image_async(self, dimensions=None):
         filename = "{}__{}".format(self.source, self.title)
         img_path = None
@@ -104,12 +115,12 @@ class NewsArticle(object):
     def to_json(self):
         ret = {}
 
-        ret["uid"] = 0 #HASH THIS
+        ret["uid"] = self.uid
         ret["title"] = self.title
         ret["description"] = self.description
         ret["content"] = self.content
         ret["url"] = self.url
-        ret["image_url"] = IMAGE_URL_FORMAT.format(ret["uid"])
+        ret["image_url"] = IMAGE_URL_FORMAT.format(ret["uid"]) # self.uid is a lazy method, so this is ever so slightly faster
         ret["keywords"] = self.all_proper_nouns
         ret["source"] = self.source
         ret["time_published"] = datetime.strftime(self.time_published, NEWSAPI_PARSED_TIME_FORMAT)
