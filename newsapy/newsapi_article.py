@@ -102,7 +102,7 @@ class NewsArticle(object):
 
 
 def parse_newsapi_time(newsapi_time_string): # WORKS
-    actual_datetime = newsapi_time_string.split('+')[0] # filters out time offset
+    actual_datetime = newsapi_time_string.split('+')[0].split('.')[0] # filters out time offset and useless decimal seconds
     actual_datetime = actual_datetime.replace('Z', '') # sometimes there's a Z on the end of the time?
     return datetime.strptime(actual_datetime, "%Y-%m-%dT%H:%M:%S")
 
