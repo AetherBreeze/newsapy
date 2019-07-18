@@ -85,7 +85,7 @@ class NewsArticle(object):
             return None
         elif not self.__uid:
             self.__parent_client.hasher.update((self.title + self.source).encode(TEXT_ENCODING_FORMAT))
-            self.__uid = self.__parent_client.hexdigest()
+            self.__uid = self.__parent_client.hasher.hexdigest()
 
         return self.__uid
 
