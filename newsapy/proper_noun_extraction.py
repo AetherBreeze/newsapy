@@ -184,14 +184,14 @@ def select_better_proper_noun_from(a, b):
     if len(b_words) == 2 and len(a_words) < 2:
         return b
 
-    # this ensures that ['Theresa May', 'Prime Minister Theresa May'] returns 'Theresa May'
+    # this ensures that ['donald trump jr.', 'trump jr.'] returns 'donald trump jr'
     if len(a_words) >= 2 and len(b_words) >= 2:
         if a_words == b_words[-2:]:
-            for distinguisher in NODE_DISTINGUISHERS: # this ensures that ['donald trump jr.', 'trump jr.'] returns 'donald trump jr'
+            for distinguisher in NODE_DISTINGUISHERS:
                 if distinguisher in a_words and distinguisher in b_words and len(b_words) == 3:
                     return b
         if b_words == a_words[-2:]:
-            for distinguisher in NODE_DISTINGUISHERS: # this ensures that ['donald trump jr.', 'trump jr.'] returns 'donald trump jr'
+            for distinguisher in NODE_DISTINGUISHERS:
                 if distinguisher in a_words and distinguisher in b_words and len(a_words) == 3:
                     return a
 

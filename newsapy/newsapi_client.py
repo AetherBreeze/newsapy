@@ -8,6 +8,7 @@ from newsapy.newsapi_article import NewsArticle
 from newsapy.nltk_handler import initialize_nltk_data
 from os.path import isdir
 from os import mkdir
+from sys import version_info
 
 
 
@@ -80,8 +81,17 @@ class NewsApiClient(object):
 
         # Keyword/Phrase
         if q is not None:
-            if type(q) == str:
-                payload['q'] = q
+            if version_info[0] == 3:
+                from urllib.parse import quote
+                q_is_str = isinstance(q, str)
+            elif version_info[0] == 2:
+                from urllib import quote
+                q_is_str = isinstance(q, basestring)
+            else:
+                raise SystemError("unsupported version of python detected (supported versions: 2, 3)")
+
+            if q_is_str:
+                payload['q'] = quote(q)
             else:
                 raise TypeError('keyword/phrase q param should be of type str')
 
@@ -212,8 +222,17 @@ class NewsApiClient(object):
 
         # Keyword/Phrase
         if q is not None:
-            if type(q) == str:
-                payload['q'] = q
+            if version_info[0] == 3:
+                from urllib.parse import quote
+                q_is_str = isinstance(q, str)
+            elif version_info[0] == 2:
+                from urllib import quote
+                q_is_str = isinstance(q, basestring)
+            else:
+                raise SystemError("unsupported version of python detected (supported versions: 2, 3)")
+
+            if q_is_str:
+                payload['q'] = quote(q)
             else:
                 raise TypeError('keyword/phrase q param should be of type str')
 
