@@ -5,7 +5,7 @@ from newsapy import image_utils
 from datetime import datetime
 from collections import OrderedDict
 from newsapy.const import NEWS_SIGNATURES, GARBAGE_SOURCES, TEXT_ENCODING_FORMAT, IMAGE_URL_FORMAT, NEWSAPI_PARSED_TIME_FORMAT
-from newsapy.proper_noun_extraction import extract_proper_nouns_from_text
+from newsapy.proper_noun_extraction import extract_proper_nouns_from_text, select_better_proper_noun_from
 
 class NewsArticle(object):
     def __init__(self, client, article_json, force_initialize_proper_nouns=False):
@@ -67,19 +67,16 @@ class NewsArticle(object):
             ret = set()
             proper_nouns = list(set().union(self.proper_nouns_in_title, self.proper_nouns_in_description)) # the non-repetitive union of two sets of proper nouns
             for first_proper_noun in proper_nouns:
-                unique = True
                 marked_for_removal_from_ret = []
                 for second_proper_noun in ret:
-                    if first_proper_noun in second_proper_noun: # if this proper noun is a smaller version of another one later in the list
-                        unique = False # dont add this one (well add the longer one later)
-                        break
-                    elif second_proper_noun in first_proper_noun:
-                        marked_for_removal_from_ret.append(second_proper_noun)
+                    if first_proper_noun in second_proper_noun or second_proper_noun in first_proper_noun: # if this proper noun is a smaller version of another one later in the list
+                        to_add = select_better_proper_noun_from(first_proper_noun, second_proper_noun)
+                        if not to_add == second_proper_noun:
+                            marked_for_removal_from_ret.append(second_proper_noun)
 
                 for subsumed_noun in marked_for_removal_from_ret:
                     ret.remove(subsumed_noun)
-                if unique: # if the noun wasnt absorbed by any others
-                    ret.add(first_proper_noun) # then we want it
+                ret.add(to_add)
 
             self.__all_proper_nouns = list(ret) # set the property so we only have to compute it once
 
