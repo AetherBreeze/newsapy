@@ -1,3 +1,5 @@
+Forked from and largely based on [newsapi-python](https://github.com/mattlisiv/newsapi-python) by Matt Lisivick.
+
 # newsapi-python
 A Python client for the [News API](https://newsapi.org/docs/)
 
