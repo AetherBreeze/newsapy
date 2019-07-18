@@ -67,6 +67,7 @@ class NewsArticle(object):
             ret = set()
             proper_nouns = list(set().union(self.proper_nouns_in_title, self.proper_nouns_in_description)) # the non-repetitive union of two sets of proper nouns
             for first_proper_noun in proper_nouns:
+                to_add = first_proper_noun
                 marked_for_removal_from_ret = []
                 for second_proper_noun in ret:
                     if first_proper_noun in second_proper_noun or second_proper_noun in first_proper_noun: # if this proper noun is a smaller version of another one later in the list
