@@ -61,17 +61,23 @@ class NewsArticle(object):
 
     @property
     def all_proper_nouns(self):
+        if self.title == "" and self.description == "":
+            return None
         if self.__all_proper_nouns is None: # if we havent already computed the list, do it now
             ret = set()
             proper_nouns = list(set().union(self.proper_nouns_in_title, self.proper_nouns_in_description)) # the non-repetitive union of two sets of proper nouns
-            for i, first_proper_noun in enumerate(proper_nouns):
+            for first_proper_noun in proper_nouns:
                 unique = True
-
-                for second_proper_noun in proper_nouns[(i+1):]:
+                marked_for_removal_from_ret = []
+                for second_proper_noun in ret:
                     if first_proper_noun in second_proper_noun: # if this proper noun is a smaller version of another one later in the list
                         unique = False # dont add this one (well add the longer one later)
                         break
+                    elif second_proper_noun in first_proper_noun:
+                        marked_for_removal_from_ret.append(second_proper_noun)
 
+                for subsumed_noun in marked_for_removal_from_ret:
+                    ret.remove(subsumed_noun)
                 if unique: # if the noun wasnt absorbed by any others
                     ret.add(first_proper_noun) # then we want it
 

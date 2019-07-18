@@ -172,3 +172,37 @@ def extract_proper_nouns_from_text(text):
         ret.append(' '.join(consecutive_proper_nouns)) # make sure to add that too
 
     return proper_noun_final_pass(ret) # do a final filter, then return the list
+
+
+def select_better_proper_noun_from(a, b):
+    a_words = a.split(' ')
+    b_words = b.split(' ')
+
+    # this ensures that ['Trump", 'Donald Trump'] returns 'Donald Trump'
+    if len(a_words) == 2 and len(b_words) < 2:
+        return a
+    if len(b_words) == 2 and len(a_words) < 2:
+        return b
+
+    # this ensures that ['Theresa May', 'Prime Minister Theresa May'] returns 'Theresa May'
+    if len(a_words) >= 2 and len(b_words) >= 2:
+        if a_words == b_words[-2:]:
+            for distinguisher in NODE_DISTINGUISHERS: # this ensures that ['donald trump jr.', 'trump jr.'] returns 'donald trump jr'
+                if distinguisher in a_words and distinguisher in b_words and len(b_words) == 3:
+                    return b
+        if b_words == a_words[-2:]:
+            for distinguisher in NODE_DISTINGUISHERS: # this ensures that ['donald trump jr.', 'trump jr.'] returns 'donald trump jr'
+                if distinguisher in a_words and distinguisher in b_words and len(a_words) == 3:
+                    return a
+
+    # if no special cases are met, return the shorter noun, to avoid one-time misidentifications like "Angela Merkel Considering" from absorbing all correct "Angela Merkel"s
+    if len(a_words) > len(b_words):
+        return b
+    if len(b_words) > len(a_words):
+        return a
+
+    # if both nouns are equal length, return the longer one, so ['Mr. Putin', 'Vladimir Putin'] returns 'Vladimir Putin'
+    if len(a) > len(b):
+        return a
+    else:
+        return b
