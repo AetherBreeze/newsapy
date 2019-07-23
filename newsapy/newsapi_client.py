@@ -449,7 +449,7 @@ class NewsApiClient(object):
 
     async def get_images_of_articles_async(self, articles_list, dimensions=None, save_path="images"):
         image_futures = [await article.image_async(dimensions=dimensions, save_path=save_path) for article in articles_list] # collect the async image fetching tasks of every article in the list
-        return self.run_requests_async(image_futures) #
+        return await self.run_requests_async(image_futures) #
 
     def get_images_of_articles(self, articles_list, dimensions=None, save_path="images"):
         return self.event_loop.run_until_complete(self.get_images_of_articles_async(articles_list, dimensions=dimensions, save_path=save_path))
