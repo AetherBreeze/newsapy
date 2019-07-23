@@ -29,22 +29,25 @@ def resize_image(image, dimensions, filename, save_path="images", filetype="png"
     else:
         ret = image
 
-    save_filename = save_path + "/" + get_valid_filename(filename) + "_{}x{}.{}".format(width, height, filetype)
+    save_filename = save_path + "/" + get_valid_filename(filename) + ".{}".format(filetype)
     cv2.imwrite(save_filename, ret)
 
     return save_filename
 
 
 async def fetch_and_resize_image(session, url, filename, save_path="images", dimensions=None): # WORKS but slow for inexplicable reasons
-    async with session.get(url) as image_response:
-        if image_response.status == 200:
-            image_array = np.asarray(bytearray(await image_response.read()), dtype="uint8") # create a numpy array from the byte array we get from reading the stream, where the data in the array is uint8's
-            image = cv2.imdecode(image_array, cv2.IMREAD_COLOR) #BREAKABLE
+    try:
+        async with session.get(url) as image_response:
+            if image_response.status == 200:
+                image_array = np.asarray(bytearray(await image_response.read()), dtype="uint8") # create a numpy array from the byte array we get from reading the stream, where the data in the array is uint8's
+                image = cv2.imdecode(image_array, cv2.IMREAD_COLOR) #BREAKABLE
 
-            if not dimensions: # if we werent told to resize the image:
-                dimensions = image.shape # use the filetype and naming convention of resize_image without actually resizing
-            image = resize_image(image, dimensions, filename, save_path=save_path, filetype="jpeg") # get the last part (image name) of the url
-            return image
+                if not dimensions: # if we werent told to resize the image:
+                    dimensions = image.shape # use the filetype and naming convention of resize_image without actually resizing
+                image = resize_image(image, dimensions, filename, save_path=save_path, filetype="jpeg") # get the last part (image name) of the url
+                return image
 
-        else:
-            return None
+            else:
+                return image_response #DEBUGGING
+    except Exception as e:
+        return e #DEBUGGING

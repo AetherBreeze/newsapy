@@ -95,7 +95,7 @@ class NewsArticle(object):
 
         return self.__uid
 
-    async def image_async(self, save_path="images", dimensions=None, finished_callback=None):
+    async def image_async(self, save_path="images", dimensions=None):
         if dimensions:
             filename = self.uid + "_{}x{}".format(dimensions[0], dimensions[1])
         else:
@@ -114,10 +114,10 @@ class NewsArticle(object):
 
         if img_path: # if the fetch didnt fail
             self.__images[dimensions] = img_path # store it so we can use it again
-            if finished_callback:
-                return self.__images[dimensions]
+            return self.__images[dimensions]
         else:
-            return  None
+            #return None #DEBUGGING
+            return "img_path was none"
 
     def image(self, dimensions=None):
         return self.__parent_client.event_loop.run_until_complete(self.image_async(dimensions=dimensions))
