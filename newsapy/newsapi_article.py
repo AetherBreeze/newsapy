@@ -105,7 +105,7 @@ class NewsArticle(object):
         if self.image_url is None:
             return None
         elif not self.__images: # if we havent fetched the image for this article yet
-            img_path, dimensions = await image_utils.fetch_and_resize_image(self.__parent_client.http_session, self.image_url, filename, save_path=save_path) # download the full-sized image
+            img_path = await image_utils.fetch_and_resize_image(self.__parent_client.http_session, self.image_url, filename, save_path=save_path) # download the full-sized image
         elif not dimensions: # if weve fetched it, and no specific dims were requested
             return self.title, list(self.__images.values())[-1]  # return the most recently fetched image
         elif dimensions not in [*self.__images]: # if it's requested for a size we havent made yet
