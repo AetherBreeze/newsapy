@@ -1,4 +1,4 @@
-from proper_noun_extraction import select_better_proper_noun_from
+from newsapy.proper_noun_extraction import extract_proper_nouns_from_text, select_better_proper_noun_from
 
 
 def select_better_proper_noun_from_tests():
@@ -13,6 +13,9 @@ def select_better_proper_noun_from_tests():
 
     # different-word-length names return the name with fewer words
     assert select_better_proper_noun_from("theresa may", "prime minister may") == "theresa may"
+
+    # accumulation
+    assert extract_proper_nouns_from_text("Trump took his friend Donald Trump to President Donald Trump's favorite McDonalds.") == ["Donald Trump", "McDonalds"]
 
 if __name__ == "__main__":
     select_better_proper_noun_from_tests()
