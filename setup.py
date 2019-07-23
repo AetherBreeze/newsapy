@@ -17,12 +17,12 @@ python_requires = '>=3'
 setup(
     name='newsapy',
     packages=["newsapy"],
-    version='0.2.5',
+    version='0.2.6',
     license='MIT',
     url='https://everyonegetinhere.com',
     install_requires=install_requires,
     description='An unofficial asynchronous, key-switching Python client for NewsAPI',
-    download_url='https://github.com/CocoPommel/newsapy/archive/0.2.5.tar.gz',
+    download_url='https://github.com/CocoPommel/newsapy/archive/0.2.6.tar.gz',
     keywords=['newsapy', 'newsapi', 'news'],
     classifiers=[
         'Intended Audience :: Developers',
