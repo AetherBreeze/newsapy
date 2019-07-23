@@ -1,4 +1,5 @@
 import cv2
+import hashlib
 import json
 
 from newsapy import image_utils
@@ -8,7 +9,7 @@ from newsapy.const import NEWS_SIGNATURES, GARBAGE_SOURCES, TEXT_ENCODING_FORMAT
 from newsapy.proper_noun_extraction import extract_proper_nouns_from_text, select_better_proper_noun_from
 
 class NewsArticle(object):
-    def __init__(self, client, article_json, force_initialize_proper_nouns=False):
+    def __init__(self, client, article_json, force_initialize_proper_nouns=False, force_initialize_images=False):
         self.__uid = None # used in some databases
         self.id = None # used for UID in some applications after fetching
         self.source = article_json["source"]["name"]
@@ -16,6 +17,7 @@ class NewsArticle(object):
         self.url = article_json["url"]
         self.time_published = parse_newsapi_time(article_json["publishedAt"])
         self.__parent_client = client
+        self.__hasher = hashlib.sha3_224()
 
         for source in GARBAGE_SOURCES:
             if source in self.url:
@@ -88,30 +90,34 @@ class NewsArticle(object):
         if not (self.title and self.source): # since the hash is a combination of these two, we cant make one without them
             return None
         elif not self.__uid:
-            self.__parent_client.hasher.update((self.title + self.source).encode(TEXT_ENCODING_FORMAT))
-            self.__uid = self.__parent_client.hasher.hexdigest()
+            self.__hasher.update((self.title + self.source).encode(TEXT_ENCODING_FORMAT))
+            self.__uid = self.__hasher.hexdigest()
 
         return self.__uid
 
-    async def image_async(self, dimensions=None):
-        filename = "{}__{}".format(self.source, self.title)
+    async def image_async(self, save_path="images", dimensions=None, finished_callback=None):
+        if dimensions:
+            filename = self.uid + "_{}x{}".format(dimensions[0], dimensions[1])
+        else:
+            filename = self.uid
         img_path = None
 
         if self.image_url is None:
             return None
         elif not self.__images: # if we havent fetched the image for this article yet
-            img_path, dimensions = await image_utils.fetch_and_resize_image(self.__parent_client.http_session, self.image_url, filename) # download the full-sized image
+            img_path, dimensions = await image_utils.fetch_and_resize_image(self.__parent_client.http_session, self.image_url, filename, save_path=save_path) # download the full-sized image
         elif not dimensions: # if weve fetched it, and no specific dims were requested
             return self.title, list(self.__images.values())[-1]  # return the most recently fetched image
         elif dimensions not in [*self.__images]: # if it's requested for a size we havent made yet
-            img_path = image_utils.resize_image(cv2.imread(list(self.__images.values())[0]), dimensions, filename, filetype="JPEG") # downsize the original image and return it instead
+            img_path = image_utils.resize_image(cv2.imread(list(self.__images.values())[0]), dimensions, filename, save_path=save_path, filetype="PNG") # downsize the original image and return it instead
         # if none of these trip, then we already have the image in that size stored in self.__images[dimensions]
 
         if img_path: # if the fetch didnt fail
             self.__images[dimensions] = img_path # store it so we can use it again
-            return self.title, self.__images[dimensions] # return the title too, since this is frequently called from get_images_of_articles and we need to track which article each image is from
+            if finished_callback:
+                return self.__images[dimensions]
         else:
-            return self.title, None
+            return  None
 
     def image(self, dimensions=None):
         return self.__parent_client.event_loop.run_until_complete(self.image_async(dimensions=dimensions))

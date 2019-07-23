@@ -447,12 +447,12 @@ class NewsApiClient(object):
     def run_requests(self, requests_list):
         return self.event_loop.run_until_complete(self.run_requests_async(requests_list))
 
-    async def get_images_of_articles_async(self, articles_list, dimensions=None):
-        image_futures = [await article.image_async(dimensions=dimensions) for article in articles_list] # collect the async image fetching tasks of every article in the list
+    async def get_images_of_articles_async(self, articles_list, dimensions=None, save_path="images"):
+        image_futures = [await article.image_async(dimensions=dimensions, save_path=save_path) for article in articles_list] # collect the async image fetching tasks of every article in the list
         return self.run_requests_async(image_futures) #
 
-    def get_images_of_articles(self, articles_list, dimensions=None):
-        return self.event_loop.run_until_complete(self.get_images_of_articles_async(articles_list, dimensions=dimensions))
+    def get_images_of_articles(self, articles_list, dimensions=None, save_path="images"):
+        return self.event_loop.run_until_complete(self.get_images_of_articles_async(articles_list, dimensions=dimensions, save_path=save_path))
 
     def close(self):
         self.event_loop.run_until_complete(self.http_session.close())

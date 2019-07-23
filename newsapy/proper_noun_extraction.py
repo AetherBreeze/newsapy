@@ -145,11 +145,12 @@ def extract_proper_nouns_from_text(text):
                 proper_noun_is_new = True
                 for older_proper_noun in ret:
                     lower_older_proper_noun = older_proper_noun.lower()
-                    if lower_proper_noun in lower_older_proper_noun: # if this proper noun is, or is an abbreviation of, a previously identified proper noun
-                        proper_noun_is_new = False # don't add this one too
-                        break # no point seeing if we can add it, now that we know we wont
-                    elif lower_older_proper_noun in lower_proper_noun: # if an *older proper noun* is an abbreviation of this one,
-                        ret.remove(older_proper_noun) # we dont need that old one anymore
+                    if lower_proper_noun in lower_older_proper_noun or lower_older_proper_noun in lower_proper_noun: # if either of these proper nouns should include each other
+                        if select_better_proper_noun_from(lower_proper_noun, lower_older_proper_noun) == lower_older_proper_noun: # and we decide to keep the old one:
+                            proper_noun_is_new = False # don't add this one too
+                            break # no point seeing if we can add it, now that we know we wont
+                        else:
+                            ret.remove(older_proper_noun) # we dont need that old one anymore
                 if proper_noun_is_new:
                     ret.append(proper_noun)
 
@@ -175,8 +176,8 @@ def extract_proper_nouns_from_text(text):
 
 
 def select_better_proper_noun_from(a, b):
-    a_words = a.split(' ')
-    b_words = b.split(' ')
+    a_words = a.lower().split(' ')
+    b_words = b.lower().split(' ')
 
     # this ensures that ['Trump", 'Donald Trump'] returns 'Donald Trump'
     if len(a_words) == 2 and len(b_words) < 2:
@@ -188,7 +189,8 @@ def select_better_proper_noun_from(a, b):
     if len(a_words) >= 2 and len(b_words) >= 2:
         if a_words == b_words[-2:]:
             for distinguisher in NODE_DISTINGUISHERS:
-                if distinguisher in a_words and distinguisher in b_words and len(b_words) == 3:
+                lowercase_distinguisher = distinguisher.lower()
+                if lowercase_distinguisher in a_words and lowercase_distinguisher in b_words and len(b_words) == 3:
                     return b
         if b_words == a_words[-2:]:
             for distinguisher in NODE_DISTINGUISHERS:
