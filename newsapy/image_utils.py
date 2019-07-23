@@ -47,4 +47,4 @@ async def fetch_and_resize_image(session, url, filename, save_path="images", dim
             return image, dimensions # (file path to image, dimensions) tuple
 
         else:
-            raise Exception("[WARNING] (HTTP Code {}) Image fetching failed from the following URL: {}".format(image_response.status, url))
+            return None
