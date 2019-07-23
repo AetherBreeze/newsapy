@@ -44,7 +44,7 @@ async def fetch_and_resize_image(session, url, filename, save_path="images", dim
             if not dimensions: # if we werent told to resize the image:
                 dimensions = image.shape # use the filetype and naming convention of resize_image without actually resizing
             image = resize_image(image, dimensions, filename, save_path=save_path, filetype="jpeg") # get the last part (image name) of the url
-            return image, dimensions # (file path to image, dimensions) tuple
+            return image
 
         else:
             return None
