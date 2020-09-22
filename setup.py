@@ -6,7 +6,7 @@ install_requires = [
     "aiohttp>=3.5.4,<4",
     "opencv-python>=4.1.0.25,<5",
     "nltk>=3.4.3,<4",
-    "Pillow>=6.0.0,<7",
+    "Pillow>=7.1.0,<8",
     "numpy>=1.16.4,<2",
 ]
 
